@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AlunoController;
 use App\Http\Controllers\Api\MotoristaController;
 use App\Http\Controllers\Api\MonitoraController;
+use App\Http\Controllers\Api\OnibusController;
+use App\Http\Controllers\Api\ManutencaoController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -34,6 +36,22 @@ Route::get('monitoras/{id}', [MonitoraController::class,'show']);
 Route::post('monitoras', [MonitoraController::class,'store']);
 Route::put('monitoras/{id}', [MonitoraController::class, 'update']);
 Route::delete('monitoras/{id}', [MonitoraController::class, 'destroy']);
+
+// 3 - ONIBUS ESCOLARES
+Route::get('onibus', [OnibusController::class, 'index']);
+Route::get('onibus/{id}', [OnibusController::class,'show']);
+Route::post('onibus', [OnibusController::class,'store']);
+Route::put('onibus/{id}', [OnibusController::class, 'update']);
+Route::delete('onibus/{id}', [OnibusController::class, 'destroy']);
+
+// 4 - MANUTENÇÕES
+
+Route::get('manutencoes', [ManutencaoController::class, 'index']);
+Route::get('manutencoes/{id}', [ManutencaoController::class,'show']);
+Route::post('manutencoes', [ManutencaoController::class,'store']);
+Route::put('manutencoes/{id}', [ManutencaoController::class, 'update']);
+Route::delete('manutencoes/{id}', [ManutencaoController::class, 'destroy']);
+
 
 // 2 OUTRAS ROTAS
 
