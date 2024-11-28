@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\MotoristaController;
 use App\Http\Controllers\Api\MonitoraController;
 use App\Http\Controllers\Api\OnibusController;
 use App\Http\Controllers\Api\ManutencaoController;
-
+use App\Http\Controllers\Api\LavagemVeiculoController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -51,6 +51,14 @@ Route::get('manutencoes/{id}', [ManutencaoController::class,'show']);
 Route::post('manutencoes', [ManutencaoController::class,'store']);
 Route::put('manutencoes/{id}', [ManutencaoController::class, 'update']);
 Route::delete('manutencoes/{id}', [ManutencaoController::class, 'destroy']);
+
+// 5 - Lavagens
+
+Route::get('lavagens', [LavagemVeiculoController::class, 'index']);
+Route::get('lavagens/{id}', [LavagemVeiculoController::class,'show']);
+Route::post('lavagens', [LavagemVeiculoController::class,'store']);
+Route::put('lavagens/{id}', [LavagemVeiculoController::class, 'update']);
+Route::delete('lavagens/{id}', [LavagemVeiculoController::class, 'destroy']);
 
 
 // 2 OUTRAS ROTAS

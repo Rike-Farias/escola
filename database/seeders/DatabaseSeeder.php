@@ -25,9 +25,12 @@ class DatabaseSeeder extends Seeder
         // Executa o seeder da Monitora
         // $this->call(MonitoraSeeder::class);
 
-        $this->call([
-            // Outros seeders que você tem
-            ManutencaoSeeder::class, // Adicione o seeder de manutenções aqui
-        ]);
+        $this->call(LavagemVeiculoSeeder::class);
+
+        // $this->call([
+        //     // Outros seeders que você tem
+        //     // ManutencaoSeeder::class, // Adicione o seeder de manutenções aqui
+            
+        // ]);
     }
 }
