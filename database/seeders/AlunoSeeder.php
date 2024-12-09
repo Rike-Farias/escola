@@ -14,6 +14,6 @@ class AlunoSeeder extends Seeder
     public function run(): void
     {
         // Usando o Factory para criar 5 alunos aleatórios
-        Aluno::factory()->count(5)->create();
+        Aluno::factory()->count(40)->create();
     }
 }

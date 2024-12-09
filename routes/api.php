@@ -16,6 +16,10 @@ use App\Http\Controllers\Api\LavagemVeiculoController;
 // 1 - CRUD DOS ALUNOS
 
 Route::get('alunos', [AlunoController::class, 'index']);
+Route::get('/alunos/count', [AlunoController::class, 'count']);
+Route::get('/alunos/amount-by-route', [AlunoController::class, 'amountStudentsByRoute']);
+Route::post('/alunos/students-by-route', [AlunoController::class, 'studentsByRoute']);
+Route::post('/alunos/students-by-class', [AlunoController::class, 'studentsByClass']); 
 Route::get('alunos/{id}', [AlunoController::class, 'show']);
 Route::post('alunos', [AlunoController::class, 'store']);
 Route::put('alunos/{id}', [AlunoController::class, 'update']);
@@ -60,8 +64,10 @@ Route::post('lavagens', [LavagemVeiculoController::class,'store']);
 Route::put('lavagens/{id}', [LavagemVeiculoController::class, 'update']);
 Route::delete('lavagens/{id}', [LavagemVeiculoController::class, 'destroy']);
 
+// 6 - Filtros de busca
+Route::post('/alunos/buscar', [AlunoController::class, 'searchStudents']);
 
-// 2 OUTRAS ROTAS
 
-Route::get('alunos/importar', [AlunoController::class, 'importar']);
+// 7 OUTRAS ROTAS
+// Route::get('alunos/importar', [AlunoController::class, 'importar']);
 
