@@ -22,6 +22,7 @@ class Onibus extends Model
         'vencimento_da_licenca',
         'dias_para_o_vencimento_da_licenca',
         'onibus_status',
+        'assentos',
     ];
 
     // Accessors (opcional para calcular os dias restantes automaticamente)

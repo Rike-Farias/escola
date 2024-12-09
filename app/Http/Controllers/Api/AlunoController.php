@@ -28,6 +28,167 @@ class AlunoController extends Controller{
         }
     }
 
+    public function searchStudents(Request $request){
+        try {
+            $termo = $request->input('query'); // Recebe o termo enviado no corpo da requisição
+
+            if (!$termo) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Nenhum termo de busca fornecido.',
+                ], 400);
+            }
+
+            // Realiza a busca em várias colunas
+            $alunos = Aluno::where('nome_aluno', 'like', "%{$termo}%")
+                ->orWhere('cpf_aluno', 'like', "%{$termo}%")
+                ->orWhere('nome_pai', 'like', "%{$termo}%")
+                ->orWhere('nome_mae', 'like', "%{$termo}%")
+                ->orWhere('turma', 'like', "%{$termo}%")
+                ->orWhere('rota', 'like', "%{$termo}%")
+                ->orWhere('numero_matricula_rede', 'like', "%{$termo}%")
+                ->orWhere('numero_inep', 'like', "%{$termo}%")
+                ->get();
+
+            if ($alunos->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Nenhum aluno encontrado para o termo fornecido.',
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Busca realizada com sucesso.',
+                'total' => $alunos->count(),
+                'data' => $alunos,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao realizar a busca: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function count()
+    {
+        try {
+            $totalAlunos = Aluno::count();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Quantidade de alunos recuperada com sucesso!',
+                'total_alunos' => $totalAlunos,
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao recuperar a quantidade de alunos: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function amountStudentsByRoute()
+    {
+        try {
+            // Agrupa por rota e conta os alunos
+            $quantidadePorRota = Aluno::select('rota')
+                ->groupBy('rota')
+                ->selectRaw('rota, COUNT(*) as quantidade')
+                ->orderBy('rota')
+                ->get();
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Quantidade de alunos por rota recuperada com sucesso!',
+                'quantidade_por_rota' => $quantidadePorRota,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao recuperar a quantidade de alunos por rota: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function studentsByRoute(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'rota' => 'required|integer|exists:alunos,rota',
+            ]);       
+
+            // Obtém todos os dados dos alunos pela rota
+            $alunos = Aluno::where('rota', $validated['rota'])->get();
+
+            // Conta o total de alunos
+            $totalAlunos = $alunos->count();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Alunos da rota ' . $validated['rota'] . ' recuperados com sucesso!',
+                'rota' => $validated['rota'],
+                'quantidade_na_rota' => $totalAlunos,
+                'alunos' => $alunos,
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro de validação.',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao recuperar os alunos por rota: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function studentsByClass(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'turma' => 'required|exists:alunos,turma',
+            ]);       
+
+            // Obtém todos os dados dos alunos pela turma
+            $alunos = Aluno::where('turma', $validated['turma'])->get();
+
+            // Conta o total de alunos
+            $totalAlunos = $alunos->count();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Alunos da turma ' . $validated['turma'] . ' recuperados com sucesso!',
+                'turma' => $validated['turma'],
+                'quantidade_na_turma' => $totalAlunos,
+                'alunos' => $alunos,
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro de validação.',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao recuperar os alunos por turma: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+
     // Método para exibir um aluno por ID
     public function show($id){
         $aluno = Aluno::find($id); // Busca o aluno pelo ID

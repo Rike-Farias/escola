@@ -20,12 +20,13 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // $this->call(OnibusSeeder::class);
+        $this->call(AlunoSeeder::class);
+        
 
         // Executa o seeder da Monitora
         // $this->call(MonitoraSeeder::class);
 
-        $this->call(LavagemVeiculoSeeder::class);
+        // $this->call(LavagemVeiculoSeeder::class);
 
         // $this->call([
         //     // Outros seeders que você tem
