@@ -69,6 +69,61 @@ class ManutencaoController extends Controller
         }
     }
 
+    public function storeMaintenanceWithReserve(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'onibus_id' => 'required|exists:onibuses,id',
+                'data' => 'required|date',
+                'nome_motorista' => 'required|string',
+                'rota' => 'required|string',
+                'km_atual' => 'required|integer',
+                'problema' => 'required|array',
+                'data_da_manutencao' => 'required|date',
+                'status_manutencao' => 'required|boolean',
+                'reserva_onibus_id' => 'nullable|exists:onibuses,id',
+            ]);
+
+            $maintenance = Manutencao::create($validated);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Manutenção registrada com sucesso!',
+                'data' => $maintenance,
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao registrar manutenção.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function listMaintenanceWithReserve()
+    {
+        try {
+            $maintenances = Manutencao::with('onibus', 'reservaOnibus')
+                ->whereNotNull('reserva_onibus_id')
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Manutenções com ônibus reserva listadas com sucesso.',
+                'data' => $maintenances,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao listar manutenções.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     /**
      * Exibe a manutenção pelo ID.
      */
@@ -144,5 +199,26 @@ class ManutencaoController extends Controller
             ], 500);
         }
     }
+
+    public function maintenanceReport()
+    {
+        try {
+            $maintenances = Manutencao::with('onibus', 'reservaOnibus')->get();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Relatório de manutenções gerado com sucesso.',
+                'data' => $maintenances,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erro ao gerar relatório.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
 

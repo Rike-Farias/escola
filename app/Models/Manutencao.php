@@ -20,7 +20,8 @@ class Manutencao extends Model
         'km_atual',
         'problema',
         'data_da_manutencao',
-        'status_manutencao'
+        'status_manutencao',
+        'reserva_onibus_id',
     ];
 
     protected $casts = [
@@ -30,5 +31,10 @@ class Manutencao extends Model
     public function onibus()
     {
         return $this->belongsTo(Onibus::class, 'onibus_id');
+    }
+
+    public function reservaOnibus()
+    {
+        return $this->belongsTo(Onibus::class, 'reserva_onibus_id');
     }
 }

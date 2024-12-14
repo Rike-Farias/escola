@@ -25,6 +25,19 @@ class Onibus extends Model
         'assentos',
     ];
 
+    public function manutencoes()
+    {
+        return $this->hasMany(Manutencao::class, 'onibus_id');
+    }
+
+    /**
+     * Relacionamento com manutenções onde o ônibus é usado como reserva.
+     */
+    public function manutencoesReserva()
+    {
+        return $this->hasMany(Manutencao::class, 'reserva_onibus_id');
+    }
+
     // Accessors (opcional para calcular os dias restantes automaticamente)
     public function getDiasParaOVencimentoDaAutorizacaoAttribute(): int
     {

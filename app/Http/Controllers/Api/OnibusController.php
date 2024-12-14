@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Onibus;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OnibusController extends Controller
 {
@@ -21,6 +22,7 @@ class OnibusController extends Controller
                 'message' => 'Lista de ônibus carregada com sucesso!',
                 'onibus' => $onibus
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -85,11 +87,13 @@ class OnibusController extends Controller
                 'message' => 'Ônibus encontrado com sucesso!',
                 'onibus' => $onibus
             ], 200);
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Ônibus não encontrado.',
             ], 404);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -120,6 +124,7 @@ class OnibusController extends Controller
             if (isset($validated['vencimento_da_autorizacao'])) {
                 $validated['dias_para_o_vencimento_da_autorizacao'] = now()->diffInDays($validated['vencimento_da_autorizacao'], false);
             }
+
             if (isset($validated['vencimento_da_licenca'])) {
                 $validated['dias_para_o_vencimento_da_licenca'] = now()->diffInDays($validated['vencimento_da_licenca'], false);
             }
@@ -180,5 +185,69 @@ class OnibusController extends Controller
             ], 500);
         }
     }
+
+    public function totalOnibuses()
+    {
+        try {
+            $total = Onibus::count();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Total de onibus foi encontrado com sucesso!',
+                'total_onibuses' => $total
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao obter total de ônibus.', 'message' => $e->getMessage()], 500);
+        }
+    }
+    
+
+    public function statusOnibuses()
+    {
+        try {
+            $ativos = Onibus::where('onibus_status', true)->count();
+            $inativos = Onibus::where('onibus_status', false)->count();
+
+            return response()->json([
+                'ativos' => $ativos,
+                'inativos' => $inativos,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro ao obter status dos ônibus.', 
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function expiredOrNearExpirationLicenseAuthorization()
+    {
+        try {
+            $hoje = Carbon::now();
+            $emSeteDias = $hoje->copy()->addDays(7);
+
+            $vencida = Onibus::where('vencimento_da_licenca', '<', $hoje)
+                ->orWhere('vencimento_da_autorizacao', '<', $hoje)
+            ->get();
+
+            $proximaDeVencer = Onibus::whereBetween('vencimento_da_licenca', [$hoje, $emSeteDias])
+                ->orWhereBetween('vencimento_da_autorizacao', [$hoje, $emSeteDias])
+            ->get();
+
+            return response()->json([
+                'vencida' => $vencida,
+                'proxima_de_vencer' => $proximaDeVencer,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro ao obter dados de vencimento.', 
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
 

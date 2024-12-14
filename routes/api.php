@@ -42,6 +42,10 @@ Route::put('monitoras/{id}', [MonitoraController::class, 'update']);
 Route::delete('monitoras/{id}', [MonitoraController::class, 'destroy']);
 
 // 3 - ONIBUS ESCOLARES
+Route::get('onibus/total', [OnibusController::class, 'totalOnibuses']); // Quantidade total de ônibus
+Route::get('onibus/status', [OnibusController::class, 'statusOnibuses']); // Ônibus ativos/inativos
+Route::get('onibus/licenca-vencida-ou-perto', [OnibusController::class, 'expiredOrNearExpirationLicenseAuthorization']); // Licença/autorização vencida ou perto de vencer
+Route::get('onibus/detalhes', [OnibusController::class, 'listaOnibusDetalhes']); // Lista detalhada de ônibus
 Route::get('onibus', [OnibusController::class, 'index']);
 Route::get('onibus/{id}', [OnibusController::class,'show']);
 Route::post('onibus', [OnibusController::class,'store']);
@@ -49,6 +53,12 @@ Route::put('onibus/{id}', [OnibusController::class, 'update']);
 Route::delete('onibus/{id}', [OnibusController::class, 'destroy']);
 
 // 4 - MANUTENÇÕES
+
+Route::prefix('manutencoes')->group(function () {
+    Route::post('/store', [ManutencaoController::class, 'storeMaintenanceWithReserve']);
+    Route::get('/with-reserve', [ManutencaoController::class, 'listMaintenanceWithReserve']);
+    Route::get('/report', [ManutencaoController::class, 'maintenanceReport']);
+});
 
 Route::get('manutencoes', [ManutencaoController::class, 'index']);
 Route::get('manutencoes/{id}', [ManutencaoController::class,'show']);
